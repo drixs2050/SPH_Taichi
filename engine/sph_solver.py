@@ -972,3 +972,25 @@ class SPHSolver:
             'material': np_material,
             'color': np_color
         }
+
+    def ferro_sim(self, t, total_start):
+        # TODO
+        if t == 0.0:
+            # Compute deltas
+            self.wc_compute_deltas()
+            self.compute_magnetic_force()
+        for p_i in range(self.particle_num[None]):
+            v_t_half_step = self.particle_velocity[p_i] + 0.5 * self.dt * self.d_velocity[p_i]
+            r_t_half_step = self.particle_positions[p_i] + 0.5 * self.dt * v_t_half_step
+            self.particle_density[p_i][0] += self.dt * self.d_density[p_i][0]
+            self.particle_pressure[p_i][0] = self.p_update(self.particle_density[p_i][0], self.rho_0, self.gamma, self.c_0)
+            self.particle_positions[p_i] = r_t_half_step + 0.5 * self.dt * v_t_half_step
+            self.wc_compute_deltas()
+            self.compute_magnetic_force()
+            self.particle_velocity[p_i] = v_t_half_step + 0.5 * self.dt * self.d_velocity[p_i]
+
+
+    # compute magnetic force and add it to d_velocity
+    def compute_magnetic_force(self):
+        # TODO
+        pass
